@@ -23,7 +23,7 @@ export function CivicGeoMap({ issues = [], selectedPosition, onLocationSelect, o
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import("leaflet").Map | null>(null);
   const layerRef = useRef<import("leaflet").LayerGroup | null>(null);
-  const leafletRef = useRef<typeof import("leaflet").default | null>(null);
+  const leafletRef = useRef<typeof import("leaflet") | null>(null);
   const locationSelectRef = useRef(onLocationSelect);
   const issueOpenRef = useRef(onIssue);
 
@@ -63,7 +63,7 @@ export function CivicGeoMap({ issues = [], selectedPosition, onLocationSelect, o
       layerRef.current = null;
       leafletRef.current = null;
     };
-  }, [interactive, selectedPosition]);
+  }, [interactive]);
 
   useEffect(() => {
     const map = mapRef.current;

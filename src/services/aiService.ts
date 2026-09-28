@@ -1,4 +1,5 @@
 import type { CivicIssue } from "@/lib/civic-data";
+import { assessSeverity } from "./severityService";
 
 export type AIAnalysis = {
   category: string;
@@ -7,6 +8,7 @@ export type AIAnalysis = {
   department: string;
   confidence: number;
   summary: string;
+  reasoning: string;
   duplicateIds: string[];
   usedMock: boolean;
 };
@@ -21,30 +23,38 @@ export type DuplicateSuggestion = {
   similarity: number;
 };
 
-const isMockMode = (mode?: "mock" | "real") => mode === "mock" || import.meta.env.VITE_MOCK_AI_MODE !== "false";
+const isMockMode = (mode?: "mock" | "real") => mode === "mock" || import.meta.env["VITE_MOCK_AI_MODE"] !== "false";
 
-function mockAnalysis(description: string): AIAnalysis {
+function mockAnalysis(description: string, imageData?: string): AIAnalysis {
   const text = description.toLowerCase();
-  const road = /pothole|road|pavement|street/.test(text);
+  const road = /pothole|road|pavement/.test(text);
   const garbage = /garbage|waste|bin|overflow/.test(text);
   const water = /water|leak|pipe/.test(text);
-  const category = road ? "Road Damage / Pothole" : garbage ? "Garbage" : water ? "Water Leakage" : "Infrastructure";
+  const drainage = /drain|sewage|flood/.test(text);
+  const light = /streetlight|street light|lamp|dark road/.test(text);
+  const tree = /tree|branch/.test(text);
+  const signage = /sign|signage|signal/.test(text);
+  const sanitation = /toilet|sanitation|cleanliness/.test(text);
+  const category = road ? (text.includes("pothole") ? "Pothole" : "Road Damage") : garbage ? "Garbage / Overflowing Bin" : water ? "Water Leakage" : drainage ? "Drainage" : light ? "Broken Streetlight" : tree ? "Fallen Tree" : signage ? "Damaged Signage" : sanitation ? "Sanitation" : "Other Infrastructure";
   const department = road ? "Road Maintenance" : garbage ? "Waste Management" : water ? "Water Supply" : "Infrastructure";
-  const severity: CivicIssue["priority"] = /danger|crash|blocked|large|major/.test(text) ? "High" : "Medium";
+  const resolvedDepartment = drainage ? "Drainage" : light ? "Electrical" : tree ? "Parks & Gardens" : signage ? "Infrastructure" : sanitation ? "Sanitation" : department;
+  const assessment = assessSeverity({ category, description });
+  const photoNote = imageData ? " A photo is attached for municipal review; mock mode does not perform visual recognition." : "";
   return {
     category,
-    severity,
-    impact: severity === "High" ? "May create a public safety risk and disrupt daily movement." : "Localized disruption reported by residents.",
-    department,
-    confidence: road || garbage || water ? 94 : 82,
+    severity: assessment.severity,
+    impact: assessment.severity === "High" || assessment.severity === "Critical" ? "May create a public safety risk and disrupt daily movement." : "Localized disruption reported by residents.",
+    department: resolvedDepartment,
+    confidence: road || garbage || water || drainage || light ? 94 : 82,
     summary: `The report appears to describe a ${category.toLowerCase()} concern that needs municipal review.`,
+    reasoning: `${assessment.explanation}${photoNote}`,
     duplicateIds: [],
     usedMock: true,
   };
 }
 
 export async function analyzeImage(imageData: string | undefined, description: string, mode?: "mock" | "real"): Promise<AIAnalysis> {
-  if (isMockMode(mode)) return mockAnalysis(description);
+  if (isMockMode(mode)) return mockAnalysis(description, imageData);
   try {
     const response = await fetch("/api/ai/analyze", {
       method: "POST",
@@ -61,11 +71,12 @@ export async function analyzeImage(imageData: string | undefined, description: s
       department: result.department,
       confidence: Math.min(100, Math.max(0, Number(result.confidence ?? 75))),
       summary: result.summary,
+      reasoning: result.reasoning ?? "Provider supplied a structured classification for citizen review.",
       duplicateIds: result.duplicateIds ?? [],
       usedMock: false,
     };
   } catch {
-    return mockAnalysis(description);
+    return mockAnalysis(description, imageData);
   }
 }
 

@@ -1,10 +1,17 @@
 export type CivicRole = "citizen" | "officer" | "admin";
-export type CivicStatus = "NEW" | "UNDER REVIEW" | "ASSIGNED" | "IN PROGRESS" | "AWAITING CITIZEN VERIFICATION" | "RESOLVED" | "REOPENED" | "REJECTED";
+export type CivicStatus = "NEW" | "UNDER REVIEW" | "ASSIGNED" | "IN PROGRESS" | "RESOLUTION SUBMITTED" | "AWAITING CITIZEN VERIFICATION" | "RESOLVED" | "REOPENED" | "REJECTED";
 export type CivicTimelineEvent = {
   label: string;
   detail: string;
   at: string;
   done: boolean;
+};
+export type CivicAuditEvent = {
+  id: string;
+  label: string;
+  detail: string;
+  actor: string;
+  at: string;
 };
 
 export type CivicIssue = {
@@ -39,6 +46,10 @@ export type CivicIssue = {
   beforeImage?: string;
   afterImage?: string;
   timeline?: CivicTimelineEvent[];
+  history?: CivicAuditEvent[];
+  resolutionSubmittedAt?: string;
+  resolvedAt?: string;
+  severityReason?: string;
 };
 
 export type CivicSettings = {
@@ -53,7 +64,18 @@ export type CivicSettings = {
 };
 
 export const departments = ["Road Maintenance", "Waste Management", "Water Supply", "Drainage", "Electrical", "Parks & Gardens", "Infrastructure", "Sanitation"];
-export const categories = ["Road Damage / Pothole", "Garbage", "Drainage", "Water Leakage", "Streetlight", "Trees", "Infrastructure"];
+export const categories = [
+  "Pothole",
+  "Road Damage",
+  "Garbage / Overflowing Bin",
+  "Water Leakage",
+  "Drainage",
+  "Broken Streetlight",
+  "Fallen Tree",
+  "Damaged Signage",
+  "Sanitation",
+  "Other Infrastructure",
+];
 export const officers = ["Priya Nair", "Vikram Joshi", "Neha Kulkarni", "Arjun Mehta", "Sonal Patil"];
 export const wards = Array.from({ length: 18 }, (_, index) => `Ward ${String(index + 1).padStart(2, "0")}`);
 export const civicAreas = [
@@ -89,6 +111,7 @@ export function createDemoIssues(): CivicIssue[] {
     const priority = priorities[index % priorities.length] ?? "Medium";
     const status = index === 4 ? "AWAITING CITIZEN VERIFICATION" : (statuses[(index * 3) % statuses.length] ?? "NEW");
     const citizen = ["Rahul Sharma", "Ananya Desai", "Aarav Kulkarni", "Meera Joshi", "Ishaan Patil"][index % 5] ?? "Rahul Sharma";
+    const assignedOfficer = index % 4 === 0 ? officers[index % officers.length] ?? officers[0] ?? "Unassigned" : undefined;
     return {
       id: `CIV-2026-${String(124 - index).padStart(5, "0")}`,
       title,
@@ -123,6 +146,12 @@ export function createDemoIssues(): CivicIssue[] {
         { label: "Municipal review", detail: index % 3 === 0 ? "Assigned to response team" : "Awaiting assignment", at: index % 3 === 0 ? "Today" : "Next", done: index % 3 === 0 },
         { label: "Resolution", detail: index === 4 ? "Ready for citizen verification" : "Not submitted", at: index === 4 ? "Today" : "Pending", done: index === 4 },
       ],
+      history: [
+        { id: `history-${n}-created`, label: "Report submitted", detail: "Issue entered into the civic register.", actor: citizen, at: new Date(Date.now() - ((index % 14) + 1) * 60 * 60 * 1000).toISOString() },
+        ...(index % 3 === 0 ? [{ id: `history-${n}-assigned`, label: "Assigned to response team", detail: `${department}${assignedOfficer ? ` · ${assignedOfficer}` : ""}`, actor: "Municipal Officer", at: new Date(Date.now() - Math.max(1, index % 8) * 60 * 60 * 1000).toISOString() }] : []),
+        ...(index === 4 ? [{ id: `history-${n}-resolution`, label: "Resolution submitted", detail: "Evidence is awaiting citizen verification.", actor: "Municipal Officer", at: new Date(Date.now() - 60 * 60 * 1000).toISOString() }] : []),
+      ],
+      ...(index === 4 ? { resolutionSubmittedAt: new Date(Date.now() - 60 * 60 * 1000).toISOString() } : {}),
     };
   });
 }

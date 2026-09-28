@@ -9,6 +9,7 @@ export type LocationMeta = {
   ward: string;
   timestamp: string;
   source: "gps" | "manual" | "fallback";
+  accuracy?: number;
 };
 
 export type Coordinates = Pick<LocationMeta, "latitude" | "longitude"> & {
@@ -59,10 +60,11 @@ function distanceInKm(latitude: number, longitude: number, targetLatitude: numbe
 }
 
 export function getNearestCivicArea(latitude: number, longitude: number) {
-  return civicAreas.reduce((nearest, area) => {
+  type CivicArea = (typeof civicAreas)[number];
+  return civicAreas.reduce<{ area: CivicArea; distance: number }>((nearest, area) => {
     const distance = distanceInKm(latitude, longitude, area.latitude, area.longitude);
     return distance < nearest.distance ? { area, distance } : nearest;
-  }, { area: civicAreas[0], distance: Number.POSITIVE_INFINITY });
+  }, { area: civicAreas[0]!, distance: Number.POSITIVE_INFINITY });
 }
 
 export function getWard(latitude: number, longitude: number) {
@@ -85,9 +87,9 @@ export async function reverseGeocode(latitude: number, longitude: number): Promi
     const address = result.address ?? {};
     return {
       address: result.display_name ?? nearest.address,
-      city: address.city ?? address.town ?? address.village ?? nearest.city,
-      area: address.suburb ?? address.neighbourhood ?? nearest.area,
-      ward: address.city_district ?? nearest.ward,
+      city: address["city"] ?? address["town"] ?? address["village"] ?? nearest.city,
+      area: address["suburb"] ?? address["neighbourhood"] ?? nearest.area,
+      ward: address["city_district"] ?? nearest.ward,
     };
   } catch {
     return { ...nearest };
@@ -96,7 +98,7 @@ export async function reverseGeocode(latitude: number, longitude: number): Promi
   }
 }
 
-export async function resolveLocation(latitude: number, longitude: number, source: LocationMeta["source"]): Promise<LocationMeta> {
+export async function resolveLocation(latitude: number, longitude: number, source: LocationMeta["source"], accuracy?: number): Promise<LocationMeta> {
   const nearest = getNearestCivicArea(latitude, longitude).area;
   const geocoded = await reverseGeocode(latitude, longitude);
   return {
@@ -108,6 +110,7 @@ export async function resolveLocation(latitude: number, longitude: number, sourc
     ward: geocoded.ward ?? nearest.ward,
     timestamp: new Date().toISOString(),
     source,
+    ...(accuracy != null ? { accuracy } : {}),
   };
 }
 

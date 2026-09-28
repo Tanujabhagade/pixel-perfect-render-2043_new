@@ -1,0 +1,359 @@
+You are taking over the EXISTING CivicPulse project in the current repository.
+
+IMPORTANT:
+
+* This is NOT a new project.
+* Do NOT rebuild the application.
+* Do NOT replace the existing UI or architecture unnecessarily.
+* Do NOT remove working features.
+* Inspect the current implementation first, then complete everything that is missing.
+* Preserve the existing CivicPulse branding and professional civic-tech design.
+* Do NOT add Lovable, Replit, Bolt, or any other platform branding/watermarks.
+* Work directly on the current `main` branch.
+* Keep the application runnable throughout the changes.
+
+PROJECT:
+CivicPulse
+Tagline: “From Citizen Reports to Smarter Cities”
+
+Purpose:
+An AI-assisted civic issue reporting and municipal infrastructure management platform for India.
+
+PRIMARY DEMO LOCATIONS:
+
+* Kopargaon
+* Shrirampur
+* Shirdi
+
+==================================================
+PHASE 1 — AUDIT CURRENT IMPLEMENTATION
+======================================
+
+Before modifying code:
+
+1. Inspect the entire existing application.
+2. Identify what is already implemented and working.
+3. Reuse existing components/services/data instead of duplicating them.
+4. Check the existing:
+
+   * dashboards
+   * report workflow
+   * AI service
+   * location service
+   * SLA service
+   * map
+   * authority workflow
+   * citizen verification
+   * analytics
+   * recurring issues
+   * admin
+   * notifications
+   * localStorage/demo state
+5. Fix incomplete pieces rather than rebuilding them.
+
+Do not spend the task rewriting working code.
+
+==================================================
+PHASE 2 — COMPLETE CITIZEN REPORTING
+====================================
+
+Ensure a citizen can complete this entire workflow:
+
+Citizen Dashboard
+→ Report Issue
+→ Upload/capture image
+→ Enter description
+→ Get current location
+→ Manually adjust location if needed
+→ AI analyzes image/text
+→ AI suggests category
+→ AI suggests severity
+→ AI suggests department
+→ AI provides concise explanation
+→ Citizen can edit AI results
+→ Similar/duplicate reports are shown
+→ Citizen reviews
+→ Submit
+→ Complaint ID generated
+→ Issue appears in My Reports
+→ Authority receives the issue.
+
+Support these categories:
+
+* Pothole
+* Road Damage
+* Garbage / Overflowing Bin
+* Water Leakage
+* Drainage
+* Broken Streetlight
+* Fallen Tree
+* Damaged Signage
+* Sanitation
+* Other Infrastructure
+
+The AI result must NEVER be final/locked.
+Citizen must be able to edit category, severity and department.
+
+==================================================
+PHASE 3 — REAL BROWSER LOCATION
+===============================
+
+Finish the existing locationService.
+
+Use:
+
+navigator.geolocation
+
+when the browser allows location access.
+
+Capture:
+
+* latitude
+* longitude
+* timestamp
+* accuracy when available
+
+Provide manual fallback if permission is denied/unavailable.
+
+Support demo location selection for:
+
+Kopargaon
+Shrirampur
+Shirdi
+
+Show the selected location clearly.
+
+Do NOT fake “live GPS” when browser permission is unavailable.
+Clearly distinguish:
+
+* Current browser location
+* Manually selected demo location
+
+Use Leaflet + OpenStreetMap for the actual map.
+
+Do not require Google Maps API keys.
+
+==================================================
+PHASE 4 — AI IMAGE/TEXT ANALYSIS
+================================
+
+Complete the existing `src/services/aiService.ts`.
+
+Architecture:
+
+Frontend
+→ server-side AI service/API
+→ AI provider
+
+NEVER expose an AI API key in frontend code.
+
+Environment configuration:
+
+AI_API_KEY=
+MOCK_AI_MODE=true
+
+If no provider/API key exists:
+
+* application must still work
+* use realistic mock AI results
+* clearly keep the provider abstraction ready for a real model
+
+AI response should be structured:
+
+{
+category,
+severity,
+department,
+summary,
+confidence,
+reasoning
+}
+
+Image analysis should consider visible infrastructure problems.
+
+Text analysis should extract:
+
+* issue type
+* location clues
+* severity
+* public impact
+* suggested department
+
+Do not pretend mock AI is real AI.
+
+==================================================
+PHASE 5 — SEVERITY ENGINE
+=========================
+
+Complete severity calculation.
+
+Levels:
+
+LOW
+MEDIUM
+HIGH
+CRITICAL
+
+Use explainable factors such as:
+
+* issue category
+* public impact
+* duplicate reports
+* sensitive/public locations
+* unresolved duration
+* safety implications
+
+Display why the severity was suggested.
+
+Authority must be able to override severity.
+
+Record:
+
+* previous severity
+* new severity
+* who changed it
+* timestamp
+* reason if provided
+
+==================================================
+PHASE 6 — DUPLICATE DETECTION
+=============================
+
+Complete duplicate detection using available data.
+
+Consider:
+
+* geographic distance
+* category
+* text similarity
+* image similarity where practical
+* time proximity
+
+Do NOT automatically delete or merge reports.
+
+Show:
+
+“Similar reports found”
+
+with:
+
+* complaint ID
+* approximate distance
+* category
+* status
+* date
+
+Let the citizen/authority decide how to handle it.
+
+==================================================
+PHASE 7 — AUTHORITY WORKFLOW
+============================
+
+Authority dashboard must allow:
+
+* view incoming issues
+* filter by department
+* filter by ward
+* filter by severity
+* filter by status
+* search
+* view map
+* assign officer
+* change department
+* change severity
+* change status
+* add internal notes
+* request information
+* upload resolution evidence
+* add resolution notes
+* submit resolution
+
+Statuses:
+
+NEW
+UNDER REVIEW
+ASSIGNED
+IN PROGRESS
+RESOLUTION SUBMITTED
+AWAITING CITIZEN VERIFICATION
+RESOLVED
+REOPENED
+REJECTED
+
+Every important status change should create history/audit information.
+
+==================================================
+PHASE 8 — SLA
+=============
+
+Complete `src/services/slaService.ts`.
+
+Use configurable demo SLA values:
+
+CRITICAL = 24 hours
+HIGH = 48 hours
+MEDIUM = 72 hours
+LOW = 7 days
+
+IMPORTANT:
+These are DEMO configuration values, not official government SLAs.
+
+Calculate SLA from:
+
+createdAt
+priority
+current status
+resolution timestamp
+
+Display:
+
+* SLA deadline
+* time remaining
+* overdue state
+* percentage/time progress where appropriate
+
+Do not hard-code dashboard SLA counts if they can be derived from issue data.
+
+==================================================
+PHASE 9 — RESOLUTION + CITIZEN VERIFICATION
+===========================================
+
+Authority can upload:
+
+Before image
+After image
+
+and resolution notes.
+
+When submitted:
+
+RESOLUTION SUBMITTED
+→ AWAITING CITIZEN VERIFICATION
+
+Citizen sees:
+
+“Has this issue been resolved?”
+
+YES — RESOLVED
+NO — STILL EXISTS
+
+If NO:
+
+status = REOPENED
+
+Keep the full history.
+
+==================================================
+PHASE 10 — CIVIC MAP
+====================
+
+Complete `CivicGeoMap.tsx`.
+
+Use:
+
+Leaflet
+OpenStreetMap
+
+Show issue markers.
+
+Mar
