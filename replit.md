@@ -10,7 +10,7 @@ The `Start application` workflow runs:
 npm run dev -- --host 0.0.0.0 --port 5000
 ```
 
-Open the Replit Preview to use the app. No external services, database, or production authentication are required for the demo. Mock AI is enabled by default; a real provider can be placed behind `/api/ai/analyze` without exposing credentials in the browser.
+Open the Replit Preview to use the app. No external services, database, or production authentication are required for the demo. Mock AI is enabled by default; the optional provider runs only on the server.
 
 ## Demo roles
 
@@ -31,7 +31,6 @@ The role selector is demo authentication only. Issue state is centralized in the
 
 - Browser location uses `navigator.geolocation`; when permission is unavailable, the UI explicitly offers manual map selection and the three supported demo locations.
 - Maps use Leaflet with OpenStreetMap tiles. No Google Maps key is required.
-- AI defaults to a structured mock provider and returns editable category, severity, department, summary, confidence, reasoning, impact, and duplicate suggestions. Set the admin AI mode to server provider when `/api/ai/analyze` is available.
 - AI defaults to structured mock analysis. Selecting **Server provider** in admin calls a TanStack server function; provider credentials never enter browser code.
 - To enable OpenAI-compatible analysis, configure `MOCK_AI_MODE=false`, `AI_PROVIDER=openai` (or `openai-compatible`), and `AI_API_KEY` as a Replit Secret. Optionally set `AI_BASE_URL` and `AI_MODEL`. The server validates image data, applies a timeout, normalizes responses, and clearly falls back to mock analysis when needed.
 - SLA targets are configurable demo values: Critical 24 hours, High 48 hours, Medium 72 hours, and Low 7 days. They are not official government SLAs.
