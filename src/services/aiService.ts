@@ -1,17 +1,7 @@
 import type { CivicIssue } from "@/lib/civic-data";
-import { assessSeverity } from "./severityService";
-
-export type AIAnalysis = {
-  category: string;
-  severity: CivicIssue["priority"];
-  impact: string;
-  department: string;
-  confidence: number;
-  summary: string;
-  reasoning: string;
-  duplicateIds: string[];
-  usedMock: boolean;
-};
+import { analyzeWithServer } from "./aiServer";
+import { mockAnalysis, type AIAnalysis } from "./aiShared";
+export type { AIAnalysis } from "./aiShared";
 
 export type DuplicateSuggestion = {
   issueId: string;
@@ -23,58 +13,12 @@ export type DuplicateSuggestion = {
   similarity: number;
 };
 
-const isMockMode = (mode?: "mock" | "real") => mode === "mock" || import.meta.env["VITE_MOCK_AI_MODE"] !== "false";
-
-function mockAnalysis(description: string, imageData?: string): AIAnalysis {
-  const text = description.toLowerCase();
-  const road = /pothole|road|pavement/.test(text);
-  const garbage = /garbage|waste|bin|overflow/.test(text);
-  const water = /water|leak|pipe/.test(text);
-  const drainage = /drain|sewage|flood/.test(text);
-  const light = /streetlight|street light|lamp|dark road/.test(text);
-  const tree = /tree|branch/.test(text);
-  const signage = /sign|signage|signal/.test(text);
-  const sanitation = /toilet|sanitation|cleanliness/.test(text);
-  const category = road ? (text.includes("pothole") ? "Pothole" : "Road Damage") : garbage ? "Garbage / Overflowing Bin" : water ? "Water Leakage" : drainage ? "Drainage" : light ? "Broken Streetlight" : tree ? "Fallen Tree" : signage ? "Damaged Signage" : sanitation ? "Sanitation" : "Other Infrastructure";
-  const department = road ? "Road Maintenance" : garbage ? "Waste Management" : water ? "Water Supply" : "Infrastructure";
-  const resolvedDepartment = drainage ? "Drainage" : light ? "Electrical" : tree ? "Parks & Gardens" : signage ? "Infrastructure" : sanitation ? "Sanitation" : department;
-  const assessment = assessSeverity({ category, description });
-  const photoNote = imageData ? " A photo is attached for municipal review; mock mode does not perform visual recognition." : "";
-  return {
-    category,
-    severity: assessment.severity,
-    impact: assessment.severity === "High" || assessment.severity === "Critical" ? "May create a public safety risk and disrupt daily movement." : "Localized disruption reported by residents.",
-    department: resolvedDepartment,
-    confidence: road || garbage || water || drainage || light ? 94 : 82,
-    summary: `The report appears to describe a ${category.toLowerCase()} concern that needs municipal review.`,
-    reasoning: `${assessment.explanation}${photoNote}`,
-    duplicateIds: [],
-    usedMock: true,
-  };
-}
+const isMockMode = (mode?: "mock" | "real") => mode === "real" ? false : mode === "mock" || import.meta.env["VITE_MOCK_AI_MODE"] !== "false";
 
 export async function analyzeImage(imageData: string | undefined, description: string, mode?: "mock" | "real"): Promise<AIAnalysis> {
   if (isMockMode(mode)) return mockAnalysis(description, imageData);
   try {
-    const response = await fetch("/api/ai/analyze", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ imageData, description }),
-    });
-    if (!response.ok) throw new Error("AI provider unavailable");
-    const result = await response.json() as Partial<AIAnalysis>;
-    if (!result.category || !result.summary || !result.department || !result.severity) throw new Error("Invalid AI response");
-    return {
-      category: result.category,
-      severity: result.severity,
-      impact: result.impact ?? "Impact requires citizen confirmation.",
-      department: result.department,
-      confidence: Math.min(100, Math.max(0, Number(result.confidence ?? 75))),
-      summary: result.summary,
-      reasoning: result.reasoning ?? "Provider supplied a structured classification for citizen review.",
-      duplicateIds: result.duplicateIds ?? [],
-      usedMock: false,
-    };
+    return await analyzeWithServer({ data: { imageData, description } });
   } catch {
     return mockAnalysis(description, imageData);
   }

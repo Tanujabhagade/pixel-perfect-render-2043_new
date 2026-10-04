@@ -1,0 +1,181 @@
+CivicPulse is now at a verified working checkpoint.
+
+DO NOT rebuild the application or redesign the UI.
+DO NOT replace working features.
+DO NOT make broad unrelated changes.
+
+Current checkpoint:
+
+* `main` is clean and builds successfully.
+* The application already has:
+
+  * `src/services/aiService.ts`
+  * location service
+  * severity service
+  * Leaflet/OpenStreetMap map
+  * citizen reporting workflow
+  * authority workflow
+  * duplicate indicators
+  * SLA logic
+  * civic intelligence
+  * admin/demo functionality
+  * `.env.example`
+* `npm run build` currently passes.
+
+TASK: Implement REAL server-side AI image analysis while preserving the existing mock fallback.
+
+Requirements:
+
+1. FIRST inspect the existing AI architecture.
+
+   * Read `src/services/aiService.ts`.
+   * Find exactly where report image analysis is currently invoked.
+   * Find the existing mock-analysis behavior.
+   * Preserve the current returned data shape wherever possible.
+
+2. Create a proper server-side AI boundary.
+
+   * The browser/client must NOT directly call an AI provider using a secret API key.
+   * AI provider calls must happen server-side.
+   * Keep the existing `AIService` abstraction.
+   * Do not expose `AI_API_KEY` or provider credentials to client-side JavaScript.
+
+3. Environment configuration:
+   Support:
+
+   * `AI_API_KEY`
+   * `AI_PROVIDER`
+   * `MOCK_AI_MODE=true|false`
+
+   Update `.env.example` with safe placeholder values only.
+   NEVER write a real API key into source code.
+   NEVER commit secrets.
+
+4. Real image analysis:
+   When mock mode is disabled and a valid AI provider/API key exists, send the uploaded civic issue image to the server-side AI provider and request structured JSON containing:
+
+   {
+   category,
+   severity,
+   department,
+   summary,
+   confidence,
+   reasoning
+   }
+
+   Categories should remain compatible with CivicPulse:
+
+   * pothole
+   * road damage
+   * garbage / overflowing bin
+   * water leakage
+   * drainage
+   * broken streetlight
+   * fallen tree
+   * damaged signage
+   * other infrastructure
+
+   Departments should remain compatible with the existing CivicPulse departments.
+
+5. AI output validation:
+
+   * Validate the provider response before returning it to the UI.
+   * Never trust arbitrary model-generated fields.
+   * Normalize invalid categories/departments/severity values.
+   * Gracefully fall back to mock analysis if:
+
+     * AI provider is unavailable
+     * API key is missing
+     * request fails
+     * response is malformed
+     * timeout occurs
+
+6. Preserve MOCK_AI_MODE.
+
+   * `MOCK_AI_MODE=true` must work without any API key.
+   * The application must remain fully usable in demo mode.
+   * Make the UI clearly distinguish AI analysis from fallback/mock analysis where appropriate.
+   * Do not falsely claim that mock analysis is real AI.
+
+7. Text analysis:
+   If the current architecture already supports report-description analysis, integrate it through the same server-side AI boundary.
+   Extract/normalize:
+
+   * category
+   * severity
+   * department
+   * summary
+   * confidence
+   * reasoning
+
+8. Severity:
+   AI may recommend severity, but the existing CivicPulse severity engine remains authoritative.
+   AI must NOT silently override deterministic severity rules.
+   Preserve authority override and audit behavior.
+
+9. Privacy/security:
+
+   * Do not log uploaded images.
+   * Do not log API keys.
+   * Do not expose provider errors containing secrets.
+   * Add reasonable request timeout/error handling.
+   * Validate image type and size before sending to the provider.
+   * Do not permanently store images unless the existing application explicitly supports that.
+
+10. UX:
+    Preserve the existing report workflow.
+    The user should still be able to:
+
+* upload an image
+* enter description
+* run AI analysis
+* see category
+* see severity
+* see department
+* see summary/reasoning
+* edit the AI result before submission
+
+11. Provider implementation:
+    Use the AI provider already intended by the existing project if one is already configured in the codebase.
+    If no provider is configured, implement the provider boundary cleanly without hard-coding a provider-specific client into the UI.
+
+12. Do NOT:
+
+* redesign the dashboard
+* change the branding
+* remove mock mode
+* expose API keys
+* add fake "real AI" behavior
+* create unnecessary dependencies
+* modify unrelated features
+* replace the existing CivicPulse architecture
+
+13. Verification:
+    Run:
+
+* TypeScript check
+* `npm run build`
+
+Also verify both modes:
+A. `MOCK_AI_MODE=true`
+- report workflow works without API key
+
+B. `MOCK_AI_MODE=false`
+- missing API key fails gracefully into a clearly identified fallback
+- if a valid API key is available in the Replit environment, perform one real image-analysis test
+
+14. At the end report:
+
+* exact files changed
+* provider architecture used
+* environment variables required
+* whether real AI was actually tested
+* whether mock mode still works
+* TypeScript result
+* build result
+* any remaining limitation
+
+IMPORTANT:
+Finish the implementation, don't merely create scaffolding.
+Keep the current CivicPulse UI and workflow intact.
+Make the smallest production-quality change necessary.
