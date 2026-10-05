@@ -14,7 +14,12 @@ export default defineConfig({
       host: "0.0.0.0",
       port: 5000,
       strictPort: true,
-      allowedHosts: replitDevDomain ? [replitDevDomain, ".replit.dev"] : [".replit.dev"],
+      allowedHosts: [
+        "ca4e9b0f-222b-4d99-8f8f-c0137119f1d2-00-1jreb0b6hkmbz.pike.repl.co",
+        ".repl.co",
+        ...(replitDevDomain ? [replitDevDomain] : []),
+        ".replit.dev",
+      ],
     },
   },
   tanstackStart: {
