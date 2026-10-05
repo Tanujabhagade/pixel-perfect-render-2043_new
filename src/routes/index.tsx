@@ -22,12 +22,20 @@ import { assessSeverity } from "@/services/severityService";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "CivicPulse | Smarter Civic Infrastructure" },
-      { name: "description", content: "From citizen reports to smarter cities. Report issues, track resolutions, and help improve your city." },
-      { property: "og:title", content: "CivicPulse | Smarter Civic Infrastructure" },
-      { property: "og:description", content: "From citizen reports to smarter cities." },
+      { title: "CivicPulse — From Citizen Reports to Smarter Cities" },
+      { name: "application-name", content: "CivicPulse" },
+      {
+        name: "description",
+        content: "AI-assisted civic issue reporting and municipal infrastructure management for smarter cities.",
+      },
+      { property: "og:site_name", content: "CivicPulse" },
+      { property: "og:title", content: "CivicPulse — From Citizen Reports to Smarter Cities" },
+      {
+        property: "og:description",
+        content: "AI-assisted civic issue reporting and municipal infrastructure management for smarter cities.",
+      },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: CivicPulse,
@@ -255,7 +263,7 @@ function Landing({ onSelectRole, onGoMap }: { onSelectRole: (role: CivicRole) =>
     <header className="mx-auto flex h-[76px] max-w-[1240px] items-center justify-between px-5"><div className="flex items-center gap-3"><img src="/civicpulse.svg" alt="CivicPulse" className="h-10 w-10 rounded-lg" /><span className="text-[18px] font-bold">CivicPulse</span></div><div className="flex items-center gap-2"><Button variant="ghost" className="hidden text-sm text-muted-foreground sm:inline-flex" onClick={onGoMap}>Explore civic map</Button><Button className="h-10 px-5" onClick={() => setShowRoles(true)}>Open demo <ArrowRight /></Button></div></header>
     <section className="relative overflow-hidden border-y border-border bg-background">
       <div className="mx-auto grid max-w-[1240px] items-center gap-12 px-5 py-16 md:grid-cols-[1.03fr_.97fr] md:py-[92px]">
-        <div className="relative z-10"><div className="mb-7 inline-flex items-center gap-2 border border-border bg-card px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[1px] text-primary"><span className="h-2 w-2 rounded-full bg-emerald-500" />Pune · Civic infrastructure</div><h1 className="max-w-[590px] text-[48px] font-semibold leading-[1.07] tracking-[-1.3px] md:text-[62px]">From citizen reports to <span className="text-primary">smarter cities.</span></h1><p className="mt-6 max-w-[500px] text-[16px] leading-7 text-muted-foreground">One connected platform to surface local issues, direct municipal action, and keep residents informed every step of the way.</p><div className="mt-8 flex flex-wrap gap-3"><Button size="lg" className="h-12 px-5" onClick={() => setShowRoles(true)}>Report a civic issue <ArrowRight /></Button><Button size="lg" variant="outline" className="h-12" onClick={onGoMap}>Explore civic map <MapPin /></Button></div><div className="mt-9 flex items-center gap-5 text-[11px] text-muted-foreground"><span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600" />Built for residents</span><span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" />Transparent resolution</span></div></div>
+        <div className="relative z-10"><div className="mb-7 inline-flex items-center gap-2 border border-border bg-card px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[1px] text-primary"><span className="h-2 w-2 rounded-full bg-emerald-500" />Pune · Civic infrastructure</div><h1 className="max-w-[590px] text-[48px] font-semibold leading-[1.07] tracking-[-1.3px] md:text-[62px]">From Citizen Reports to <span className="text-primary">Smarter Cities</span></h1><p className="mt-6 max-w-[500px] text-[16px] leading-7 text-muted-foreground">One connected platform to surface local issues, direct municipal action, and keep residents informed every step of the way.</p><div className="mt-8 flex flex-wrap gap-3"><Button size="lg" className="h-12 px-5" onClick={() => setShowRoles(true)}>Report a civic issue <ArrowRight /></Button><Button size="lg" variant="outline" className="h-12" onClick={onGoMap}>Explore civic map <MapPin /></Button></div><div className="mt-9 flex items-center gap-5 text-[11px] text-muted-foreground"><span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600" />Built for residents</span><span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" />Transparent resolution</span></div></div>
         <div className="relative min-h-[340px] overflow-hidden border border-border bg-card p-4 shadow-sm md:min-h-[410px] md:p-5"><div className="flex items-center justify-between border-b border-border pb-4"><div><div className="text-[11px] font-bold uppercase tracking-[1px] text-muted-foreground">Pune · Live civic pulse</div><div className="mt-1 text-[14px] font-semibold">Ward activity overview</div></div><div className="flex items-center gap-1.5 text-[11px] text-emerald-700"><span className="h-2 w-2 rounded-full bg-emerald-500" />Updated just now</div></div><div className="civic-map civic-grid relative mt-4 h-[220px] overflow-hidden md:h-[278px]">{[[22,28,"High"],[54,35,"Medium"],[74,20,"High"],[41,61,"Low"],[82,69,"Critical"],[26,76,"Medium"],[61,79,"High"],[89,42,"Low"]].map(([left, top, level], index) => <span key={index} className={`absolute grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-[3px] border-card shadow-sm ${level === "Critical" ? "bg-rose-600" : level === "High" ? "bg-orange-500" : level === "Medium" ? "bg-amber-500" : "bg-emerald-600"}`} style={{ left: `${left}%`, top: `${top}%` }}><MapPin className="h-3.5 w-3.5 text-primary-foreground" /></span>)}<div className="absolute bottom-3 left-3 bg-card px-3 py-2 text-[10px] text-muted-foreground shadow-sm">Central Pune · Ward 12</div></div><div className="grid grid-cols-3 divide-x divide-border pt-4 text-center"><div><div className="text-[18px] font-semibold">1,284</div><div className="mt-1 text-[10px] text-muted-foreground">Reports tracked</div></div><div><div className="text-[18px] font-semibold">76%</div><div className="mt-1 text-[10px] text-muted-foreground">Resolved this month</div></div><div><div className="text-[18px] font-semibold">18</div><div className="mt-1 text-[10px] text-muted-foreground">Wards connected</div></div></div></div>
       </div>
     </section>

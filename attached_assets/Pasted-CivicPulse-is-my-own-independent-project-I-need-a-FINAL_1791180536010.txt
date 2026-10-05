@@ -1,0 +1,289 @@
+CivicPulse is my own independent project.
+
+I need a FINAL BRANDING + DEMO-SAFETY cleanup.
+
+IMPORTANT:
+Do NOT rebuild the application.
+Do NOT redesign the UI.
+Do NOT change working CivicPulse functionality.
+Do NOT make large architectural changes.
+Do NOT spend time implementing new features.
+
+The priority is:
+
+1. Remove ALL Lovable branding/references.
+2. Make sure CivicPulse continues running independently even if Replit Agent/free Agent tokens are exhausted.
+3. Keep the current working prototype available for my professor demonstration.
+
+---
+
+1. REMOVE ALL LOVABLE BRANDING
+
+---
+
+Search the ENTIRE project for:
+
+* Lovable
+* lovable.dev
+* lovable.app
+* Lovable favicon
+* Lovable logo
+* Lovable metadata
+* Lovable title
+* Lovable description
+* Lovable Open Graph image
+* Lovable generated comments
+* Lovable references in HTML
+* Lovable references in package/config files
+
+Use project-wide search, not just the visible UI.
+
+Remove or replace every unnecessary Lovable reference.
+
+The final application must identify itself only as:
+
+CivicPulse
+
+Tagline:
+
+From Citizen Reports to Smarter Cities
+
+---
+
+2. REMOVE LOVABLE FAVICON
+
+---
+
+The browser tab/address-bar favicon must NOT use the Lovable logo.
+
+Create/use an independent CivicPulse favicon.
+
+Prefer a simple CivicPulse civic-tech icon or a clean "CP" favicon if an existing CivicPulse logo asset is not available.
+
+Add the favicon correctly to the application's document/head configuration.
+
+Check:
+
+* favicon
+* apple-touch-icon if present
+* manifest icons if present
+* Open Graph image if applicable
+
+Do NOT leave a Lovable icon as a fallback.
+
+---
+
+3. BROWSER TAB TITLE
+
+---
+
+The browser title should be:
+
+CivicPulse — From Citizen Reports to Smarter Cities
+
+Remove any Lovable-generated title.
+
+---
+
+4. METADATA
+
+---
+
+Update application metadata to:
+
+Name:
+CivicPulse
+
+Description:
+AI-assisted civic issue reporting and municipal infrastructure management for smarter cities.
+
+Do not mention Lovable, Replit, Bolt, Vercel, or any development platform in user-facing metadata.
+
+---
+
+5. SEARCH FOR HIDDEN BRANDING
+
+---
+
+Search source files, public assets, configuration, HTML, manifest, metadata and static assets.
+
+Do not delete files blindly.
+
+Only remove branding/references that are unrelated to CivicPulse functionality.
+
+If an asset is clearly a Lovable logo/favicon, replace it with a CivicPulse asset.
+
+---
+
+6. DEMO SAFETY — VERY IMPORTANT
+
+---
+
+I need to demonstrate this application to my professor.
+
+The application MUST continue running even if:
+
+* Replit Agent tokens become exhausted
+* Replit Agent stops working
+* AI API credentials are unavailable
+* external AI services are unavailable
+* browser geolocation is denied
+* the user has no API key
+
+The running application must NOT depend on Replit Agent tokens.
+
+Agent tokens are only for development/editing. Once the code is running, the application must continue functioning independently.
+
+---
+
+7. KEEP MOCK/DEMO MODE
+
+---
+
+Make sure:
+
+`MOCK_AI_MODE=true`
+
+can run the complete prototype without requiring an external AI API.
+
+Demo mode must support:
+
+* landing page
+* Citizen dashboard
+* Authority dashboard
+* Admin dashboard
+* report creation
+* image upload
+* mock AI analysis
+* category
+* severity
+* department
+* location
+* duplicate suggestions
+* complaint ID
+* authority workflow
+* SLA/demo timing
+* resolution evidence
+* citizen verification
+* civic map
+* civic intelligence
+* notifications
+* seeded demo data
+
+Do NOT remove the mock fallback.
+
+---
+
+8. DO NOT MAKE THE APP DEPEND ON AGENT TOKENS
+
+---
+
+Do not add any runtime dependency on:
+
+* Replit Agent
+* Replit Agent tokens
+* Lovable
+* Lovable APIs
+* development-agent services
+
+The deployed/running application must be a normal standalone web application.
+
+---
+
+9. DO NOT BREAK CURRENT PREVIEW
+
+---
+
+Preserve the current Replit Vite configuration.
+
+The development server must continue using:
+
+host: 0.0.0.0
+port: 5000
+
+Preserve the `allowedHosts` configuration required for the Replit preview.
+
+Do NOT change the working preview configuration unless necessary.
+
+---
+
+10. DEMO DATA
+
+---
+
+Ensure seeded/demo data remains available even if there is no backend database.
+
+The professor demonstration should not show an empty application.
+
+Use the existing CivicPulse synthetic data.
+
+Do not use real people's personal information.
+
+---
+
+11. VERIFY
+
+---
+
+After making the branding cleanup:
+
+Run:
+
+`npx tsc --noEmit`
+
+Then:
+
+`npm run build`
+
+Then verify the running preview.
+
+Check:
+
+* CivicPulse landing page loads
+* favicon is CivicPulse, NOT Lovable
+* browser title says CivicPulse
+* no Lovable branding appears anywhere visible
+* report workflow still opens
+* map still works
+* dashboards still work
+* mock AI still works
+* application does not require an AI API key
+* application does not require Agent tokens at runtime
+
+---
+
+12. IMPORTANT — DO NOT OVERWORK THIS TASK
+
+---
+
+This is a cleanup/stability task.
+
+Do NOT:
+
+* redesign the application
+* rewrite components
+* migrate frameworks
+* change the database architecture
+* add unnecessary packages
+* implement new AI providers
+* change the existing CivicPulse workflow
+* remove working features
+
+Make only the changes necessary for:
+A. removing Lovable branding
+B. independent CivicPulse branding
+C. reliable demo operation
+
+At the end report:
+
+1. Every Lovable reference removed/replaced.
+2. Favicon location/file.
+3. Browser title.
+4. Metadata changes.
+5. Confirmation that mock/demo mode works without API credentials.
+6. TypeScript result.
+7. Build result.
+8. Preview result.
+9. Any remaining Lovable reference that could not safely be removed.
+
+Do not stop at describing the changes. Actually implement them.

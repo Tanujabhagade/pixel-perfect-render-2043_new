@@ -1,26 +1,20 @@
-# Pixel Perfect
+# CivicPulse
 
-Implement exactly the screenshot and nothing else
+From Citizen Reports to Smarter Cities
 
-This project was built with [Lovable](https://lovable.dev).
+AI-assisted civic issue reporting and municipal infrastructure management for smarter cities.
 
-**Live app**: https://pixel-perfect-render-2043.lovable.app
+## Run locally
 
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/a9eef504-7468-4b4e-89aa-8d240cae347e).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Requires Node.js and npm.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+npm install
+npm run dev -- --host 0.0.0.0 --port 5000
 ```
+
+## Demo mode
+
+The prototype runs with seeded civic data and mock AI; no AI credentials, external AI service, or database are required. Set `MOCK_AI_MODE=true` and `VITE_MOCK_AI_MODE=true` to explicitly enable mock mode. Browser location can be declined; manual demo locations remain available.
+
+An optional server-side AI provider can be configured through environment variables. Its credentials are not required for the demonstration.

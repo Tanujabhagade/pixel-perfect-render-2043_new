@@ -7,10 +7,9 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
@@ -37,9 +36,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -77,13 +73,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "CivicPulse | Smarter Civic Infrastructure" },
-      { name: "description", content: "From citizen reports to smarter cities." },
+      { title: "CivicPulse — From Citizen Reports to Smarter Cities" },
+      { name: "application-name", content: "CivicPulse" },
+      {
+        name: "description",
+        content: "AI-assisted civic issue reporting and municipal infrastructure management for smarter cities.",
+      },
       { name: "author", content: "CivicPulse" },
-      { property: "og:title", content: "CivicPulse | Smarter Civic Infrastructure" },
-      { property: "og:description", content: "From citizen reports to smarter cities." },
+      { property: "og:site_name", content: "CivicPulse" },
+      { property: "og:title", content: "CivicPulse — From Citizen Reports to Smarter Cities" },
+      {
+        property: "og:description",
+        content: "AI-assisted civic issue reporting and municipal infrastructure management for smarter cities.",
+      },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:card", content: "summary" },
     ],
     links: [
       {
